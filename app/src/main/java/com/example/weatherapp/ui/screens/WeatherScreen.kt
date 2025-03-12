@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.weatherapp.data.models.UiState
 import com.example.weatherapp.ui.components.WeatherCard
 import com.example.weatherapp.ui.viewmodels.WeatherViewModel
 import java.text.SimpleDateFormat
@@ -39,8 +40,10 @@ fun WeatherScreen(
     cityName: String,
     weatherViewModel: WeatherViewModel
 ){
-    weatherViewModel.fetchWeatherForCity(cityName)
     val weatherData by weatherViewModel.weatherData.collectAsState()
+    val isLoading by weatherViewModel.isLoading.collectAsState()
+
+    weatherViewModel.fetchWeatherForCity(cityName)
 
     Row(
         modifier = Modifier
@@ -56,7 +59,7 @@ fun WeatherScreen(
         }
     }
 
-    if (weatherData != null){
+    if (isLoading == UiState.SUCCESS && weatherData != null){
         val hourlyData = weatherData!!.hourly
         val times = hourlyData.time
         val temps = hourlyData.temperature2m
@@ -94,7 +97,7 @@ fun WeatherScreen(
             }
         }
     }
-    else{
+    else if (isLoading == UiState.FAILED){
         Row(
             modifier = Modifier
                 .fillMaxWidth()

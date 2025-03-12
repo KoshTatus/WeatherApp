@@ -1,8 +1,8 @@
 package com.example.weatherapp.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.data.models.UiState
 import com.example.weatherapp.data.models.WeatherResponse
 import com.example.weatherapp.data.repositories.CityRepository
 import com.example.weatherapp.data.repositories.WeatherRepository
@@ -14,12 +14,11 @@ class WeatherViewModel(
     private val weatherRepository: WeatherRepository,
     private val cityRepository: CityRepository
 ) : ViewModel() {
+    private val _isLoading = MutableStateFlow<UiState>(UiState.LOADING)
+    val isLoading: StateFlow<UiState> = _isLoading
 
     private val _weatherData = MutableStateFlow<WeatherResponse?>(null)
     val weatherData: StateFlow<WeatherResponse?> = _weatherData
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
 
     fun getCityName(cityEngName: String): String = cityRepository.cities.find { it.nameEn == cityEngName }!!.name
 
@@ -33,14 +32,15 @@ class WeatherViewModel(
                     weatherRepository.getWeatherData(city.latitude, city.longitude).collect{ weatherResult ->
                         if (weatherResult.isSuccess){
                             _weatherData.value = weatherResult.getOrNull()
+                            _isLoading.value = UiState.SUCCESS
                         }
                         else if (weatherResult.isFailure){
-                            _error.value = weatherResult.exceptionOrNull()!!.message
+                            _isLoading.value = UiState.FAILED
                         }
                     }
                 }
                 else if (cityResult.isFailure){
-                    _error.value = cityResult.exceptionOrNull()!!.message
+                    _isLoading.value = UiState.FAILED
                 }
             }
         }

@@ -22,7 +22,7 @@ fun CityList(
     cities: List<City>,
 ){
     Row(
-        modifier = Modifier.fillMaxWidth().padding(25.dp),
+        modifier = Modifier.fillMaxWidth().padding(30.dp),
         horizontalArrangement = Arrangement.Center
     )
     {
