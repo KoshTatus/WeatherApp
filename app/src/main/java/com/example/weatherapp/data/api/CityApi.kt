@@ -12,7 +12,7 @@ interface CityApi {
     @GET("v1/city")
     suspend fun getCityData(
         @Query("name") name: String,
-        @Header("X-Api-Key") api: String = "OlxiC/Em5ZQHgxjPZ0VGIg==ubyWq7Xin1vaLoPX"
+        @Header("X-Api-Key") api: String = "YOUR_API_KEY"
     ): Response<List<CityResponse>>
 }
 
